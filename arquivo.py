@@ -12,3 +12,7 @@ def le_jogos():
             jogos.append(jogo)
     
     return jogos
+
+def escreve(jogo):
+    with open("jogo.csv", mode="a") as arquivo:
+        arquivo.write("\n{}, {}, {}".format(jogo.nome, jogo.categoria, jogo.console))
