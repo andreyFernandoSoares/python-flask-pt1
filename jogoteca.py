@@ -1,9 +1,13 @@
 from flask import Flask, render_template, request, redirect, session, flash, url_for
 from jogo import Jogo
+from usuario import Usuario
+import usuario_builder
 import arquivo
 
 app = Flask(__name__)
 app.secret_key = 'andrey'
+
+usuarios = usuario_builder.constroi()
 
 @app.route('/')
 def lista():
@@ -30,11 +34,13 @@ def login():
 
 @app.route('/auth', methods=["POST"])
 def auth():
-    if 'mestra' == request.form['senha']:
-        session['usuario_logado'] = request.form['usuario']
-        flash('{} logou com sucesso!'.format(request.form['usuario']))
-        proxima_pagina = request.form['proxima']
-        return redirect(proxima_pagina)
+    if request.form['usuario'] in usuarios:
+        usuario = usuarios[request.form['usuario']]
+        if usuario.senha == request.form['senha']:
+            session['usuario_logado'] = usuario.id
+            flash('{} logou com sucesso!'.format(usuario.nome))
+            proxima_pagina = request.form['proxima']
+            return redirect(proxima_pagina)
     else:
         flash('Não logado, Tente novamente!')
         return redirect(url_for('login'))
